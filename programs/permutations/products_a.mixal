@@ -62,7 +62,7 @@ DONE	CMP1	=ANS=
 	HLT
 *
 LPREN	ALF	"    ("
-RPREN	ALF	")    "
+RPREN	ALF	"    )"
 EQUALS	ALF	"    ="
 *
 GO	MOVE	LPREN

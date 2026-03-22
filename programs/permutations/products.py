@@ -51,6 +51,37 @@ def product_a(perm_prod: list[int]) -> list[int]:
 
     return output
 
+def product_b(perm_prod: list[int]) -> list[int]:
+    """
+    TAOCP 1.3.3 performs a permutation product with a single pass
+
+    see notes for product_a
+    """
+    # constants of str to ascii ints
+    LPREN = ord('(')
+    RPREN = ord(')')
+
+    aux_table = []
+
+    perm_prod.reverse()
+
+    z = 0
+    j = 0
+    for element in perm_prod:
+        if element == RPREN:
+            z = 0
+        elif element == LPREN:
+            aux_table[j] = z
+        else:
+            if element not in aux_table:
+                aux_table.append(element)
+            element_index = aux_table.index(element)
+            z, aux_table[element_index] = aux_table[element_index], z
+            if aux_table[element_index] == 0:
+                j = element_index
+
+
+
 if __name__ == '__main__':
     # unit tests
     permutation = ['(', 'a', 'b', 'c', ')', '(', 'b', 'c', 'a', ')', '(', 'c', 'a', 'b', ')']
