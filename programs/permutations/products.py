@@ -62,6 +62,7 @@ def product_b(perm_prod: list[int]) -> list[int]:
     RPREN = ord(')')
 
     aux_table = []
+    element_table = []
 
     perm_prod.reverse()
 
@@ -69,44 +70,87 @@ def product_b(perm_prod: list[int]) -> list[int]:
     j = 0
     for element in perm_prod:
         if element == RPREN:
-            z = 0
+            z = -1
         elif element == LPREN:
             aux_table[j] = z
         else:
-            if element not in aux_table:
-                aux_table.append(element)
-            element_index = aux_table.index(element)
+            if element not in element_table:
+                element_table.append(element)
+                aux_table.append(len(element_table)-1)
+            element_index = element_table.index(element)
             z, aux_table[element_index] = aux_table[element_index], z
-            if aux_table[element_index] == 0:
+            if aux_table[element_index] == -1:
                 j = element_index
 
+    output = []
+    tag_table = [0]*len(element_table)
+    scan_index = 0
+    while scan_index < len(aux_table):
+        # skip if tagged
+        if tag_table[scan_index] == 1:
+            scan_index += 1
+            continue
+        # skip if singleton
+        if scan_index == aux_table[scan_index]:
+            scan_index += 1
+            continue
+        # construct a cycle
+        output.append(LPREN)
+        output.append(element_table[scan_index])
+        tag_table[scan_index] = 1
+        cycle_index = aux_table[scan_index]
+        # until we hit an already tagged element
+        while tag_table[cycle_index] == 0:
+            output.append(element_table[cycle_index])
+            tag_table[cycle_index] = 1
+            cycle_index = aux_table[cycle_index]
+        output.append(RPREN)
+        scan_index += 1
+
+    return output
 
 
 if __name__ == '__main__':
     # unit tests
     permutation = ['(', 'a', 'b', 'c', ')', '(', 'b', 'c', 'a', ')', '(', 'c', 'a', 'b', ')']
     permutation = [ord(char) for char in permutation]
+    permutation_b = permutation.copy()
     prod = product_a(permutation)
     prod = [chr(char) for char in prod]
-    assert prod == ['(', 'a', ')', '(', 'b', ')', '(', 'c', ')'], f'test 0 failed: {prod}'
+    assert prod == ['(', 'a', ')', '(', 'b', ')', '(', 'c', ')'], f'test 0a failed: {prod}'
+    prod = product_b(permutation_b)
+    prod = [chr(char) for char in prod]
+    assert prod == [], f'test 0b failed: {prod}'
 
     permutation = ['(', 'a', 'c', 'f', 'g', ')', '(', 'b', 'c', 'd', ')', '(', 'a', 'e', 'd', ')', '(', 'f', 'a', 'd', 'e', ')', '(', 'b', 'g', 'f', 'a', 'e', ')']
     permutation = [ord(char) for char in permutation]
+    permutation_b = permutation.copy()
     prod = product_a(permutation)
     prod = [chr(char) for char in prod]
-    assert prod == ['(', 'a', 'd', 'g', ')', '(', 'c', 'e', 'b', ')', '(', 'f', ')'], f'test 1 failed: {prod}'
+    assert prod == ['(', 'a', 'd', 'g', ')', '(', 'c', 'e', 'b', ')', '(', 'f', ')'], f'test 1a failed: {prod}'
+    prod = product_b(permutation_b)
+    prod = [chr(char) for char in prod]
+    assert prod == ['(', 'e', 'b', 'c', ')', '(', 'a', 'd', 'g', ')'], f'test 1b failed: {prod}'
 
     permutation = ['(', 'a', 'b', ')', '(', 'b', 'c', ')', '(', 'c', 'a', ')']
     permutation = [ord(char) for char in permutation]
+    permutation_b = permutation.copy()
     prod = product_a(permutation)
     prod = [chr(char) for char in prod]
-    assert prod == ['(', 'a', ')', '(', 'b', 'c', ')'], f'test 2 failed: {prod}'
+    assert prod == ['(', 'a', ')', '(', 'b', 'c', ')'], f'test 2a failed: {prod}'
+    prod = product_b(permutation_b)
+    prod = [chr(char) for char in prod]
+    assert prod == ['(', 'c', 'b', ')'], f'test 2b failed: {prod}'
 
     permutation = ['(', 'x', 'y', ')', '(', 'a', 'b', 'c', ')', '(', 'y', 'z', ')', '(', 'b', 'x', ')']
     permutation = [ord(char) for char in permutation]
+    permutation_b = permutation.copy()
     prod = product_a(permutation)
     prod = [chr(char) for char in prod]
-    assert prod == ['(', 'x', 'z', 'y', 'b', 'c', 'a', ')'], f'test 3 failed: {prod}'
+    assert prod == ['(', 'x', 'z', 'y', 'b', 'c', 'a', ')'], f'test 3a failed: {prod}'
+    prod = product_b(permutation_b)
+    prod = [chr(char) for char in prod]
+    assert prod == ['(', 'x', 'z', 'y', 'b', 'c', 'a', ')'], f'test 3b failed: {prod}'
 
     print('all tests passed\n')
 
@@ -142,21 +186,36 @@ if __name__ == '__main__':
     RPREN = ord(')')
 
     for size in [10, 100, 1000]:
-        times = []
+        times_a = []
+        times_b = []
         num_trials = 100
 
         for _ in range(num_trials):
             perm_prod = generate_random_permutation_product(size)
+            perm_prod_b = perm_prod.copy()
 
             start_time = time.perf_counter()
             product_a(perm_prod)
             end_time = time.perf_counter()
+            times_a.append(end_time - start_time)
 
-            times.append(end_time - start_time)
+            start_time = time.perf_counter()
+            product_b(perm_prod_b)
+            end_time = time.perf_counter()
+            times_b.append(end_time - start_time)
 
-        avg_time = sum(times) / len(times)
-        print(f"Size {size}: Average time = {avg_time*1000:.4f} ms ({num_trials} trials)")
+        avg_time_a = sum(times_a) / len(times_a)
+        print(f"Size {size}: Average time = {avg_time_a*1000:.4f} ms ({num_trials} trials)")
 
+        avg_time_b = sum(times_b) / len(times_b)
+        print(f"Size {size}: Average time = {avg_time_b*1000:.4f} ms ({num_trials} trials)")
+
+    # product_a times
     # Size 10: Average time = 0.0117 ms (100 trials)
     # Size 100: Average time = 0.9217 ms (100 trials)
     # Size 1000: Average time = 124.1438 ms (100 trials)
+
+    # product_b times
+    # Size 10: Average time = 0.0035 ms (100 trials)
+    # Size 100: Average time = 0.0736 ms (100 trials)
+    # Size 1000: Average time = 5.5402 ms (100 trials)
