@@ -1,0 +1,27 @@
+* TAOCP 1.3.2 ex 9 will determine if the contents of location INST is a through and true MIX command
+*
+INST	EQU	0		The address to test
+	ORIG	1
+GOOD	ORIG	*+2
+BAD	ORIG	*+2
+TABLE	ORIG	*+64		FIXME: +-AA and F table the table is defined below
+* 1. Check I
+BEGIN	LDA	INST(3:3)
+* is I greater or equal than 0?
+	CMPA	=0=
+	JL	BAD
+* is I less or equal than 6?
+	CMPA	=6=
+	JG	BAD
+* 2. Check C
+	LDA	INST(5:5)
+* is C greater or equal than 0?
+	CMPA	=0=
+	JL	BAD
+* is C less or equal than 63
+	CMPA	=63=
+	JG	BAD
+* 3. and 4. check table for F and +-AA
+*	JMP	TABLE+C*3	FIXME: fix how much to jump with
+	JMP	GOOD
+	END	BEGIN
