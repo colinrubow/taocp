@@ -5,6 +5,14 @@ INST	EQU	0		The address to test
 GOOD	ORIG	*+2
 BAD	ORIG	*+2
 TABLE	ORIG	*+64		FIXME: +-AA and F table the table is defined below
+CHKA	ORIG	*+10		FIXME: implement
+CHKFN	ORIG	*+10		FIXME: iplement
+CHKF2	ORIG	*+10		FIXME: implement
+CHKF3	ORIG	*+10		FIXME	implement
+CHKF5	ORIG	*+10		FIXME: implement
+CHKF9	ORIG	*+10		FIXME  implement
+CHKF20	ORIG	*+10		FIXME implement
+**********
 * 1. Check I
 BEGIN	LDA	INST(3:3)
 * is I greater or equal than 0?
@@ -22,6 +30,65 @@ BEGIN	LDA	INST(3:3)
 	CMPA	=63=
 	JG	BAD
 * 3. and 4. check table for F and +-AA
-*	JMP	TABLE+C*3	FIXME: fix how much to jump with
+	LD1	INST(0:2)
+	LD2	INST(4:4)
+	MUL	=4=
+0H	STX	*
+	LD3	1B
+	JMP	TABLE,3
 	JMP	GOOD
+**********
+* implement GOOD
+	ORIG	GOOD
+	ENTA	7
+	HLT
+**********
+* implement BAD
+	ORIG	BAD
+	ENTA	666
+	HLT
 	END	BEGIN
+**********
+* implement TABLE
+	ORIG	TABLE
+* C = 00
+	STJ	0F
+	NOP
+	NOP
+0H	JMP	*-*
+* C = 01
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 02
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 03
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 04
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 05
+	STJ	0F
+	JMP	CHKF2
+	NOP
+0H	JMP	*-*
+* C = 06
+	STJ	0F
+	JMP	CHKF5
+	NOP
+0H	JMP	*-*
+* C = 07
+	STJ	0F
+	NOP
+	JMP	CHKA
+0H	JMP	*-*
+* C = 08
