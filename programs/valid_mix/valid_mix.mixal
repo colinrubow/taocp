@@ -2,31 +2,31 @@
 *
 INST	EQU	0		The address to test
 	ORIG	1
-GOOD	ORIG	*+2
-BAD	ORIG	*+2
-TABLE	ORIG	*+64		FIXME: +-AA and F table the table is defined below
-CHKA	ORIG	*+10		FIXME: implement
-CHKFN	ORIG	*+10		FIXME: iplement
-CHKF2	ORIG	*+10		FIXME: implement
-CHKF3	ORIG	*+10		FIXME	implement
-CHKF5	ORIG	*+10		FIXME: implement
-CHKF9	ORIG	*+10		FIXME  implement
-CHKF20	ORIG	*+10		FIXME implement
+GOOD	ORIG	*+3
+BAD	ORIG	*+3
+TABLE	ORIG	*+64*4		The table is defined below and following are defined after the main code
+CHKA	ORIG	*+8
+CHKFN	ORIG	*+24
+CHKF2	ORIG	*+6
+CHKF3	ORIG	*+6
+CHKF5	ORIG	*+6
+CHKF9	ORIG	*+6
+CHKF20	ORIG	*+6
 **********
 * 1. Check I
-BEGIN	LDA	INST(3:3)
-* is I greater or equal than 0?
-	CMPA	=0=
+BEGIN	LD3	INST(3:3)
+* is I >= than 0?
+	CMP3	=0=
 	JL	BAD
-* is I less or equal than 6?
-	CMPA	=6=
+* is I <= than 6?
+	CMP3	=6=
 	JG	BAD
 * 2. Check C
-	LDA	INST(5:5)
-* is C greater or equal than 0?
+	LD3	INST(5:5)
+* is C >= than 0?
 	CMPA	=0=
 	JL	BAD
-* is C less or equal than 63
+* is C <= than 63
 	CMPA	=63=
 	JG	BAD
 * 3. and 4. check table for F and +-AA
@@ -34,7 +34,7 @@ BEGIN	LDA	INST(3:3)
 	LD2	INST(4:4)
 	MUL	=4=
 0H	STX	*
-	LD3	1B
+	LD3	0B
 	JMP	TABLE,3
 	JMP	GOOD
 **********
@@ -47,7 +47,6 @@ BEGIN	LDA	INST(3:3)
 	ORIG	BAD
 	ENTA	666
 	HLT
-	END	BEGIN
 **********
 * implement TABLE
 	ORIG	TABLE
@@ -92,3 +91,385 @@ BEGIN	LDA	INST(3:3)
 	JMP	CHKA
 0H	JMP	*-*
 * C = 08
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 09
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 10
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 11
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 12
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 13
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 14
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 15
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 16
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 17
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 18
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 19
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 20
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 21
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 22
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 23
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 24
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 25
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 26
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 27
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 28
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 29
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 30
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 31
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 32
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 33
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 34
+	STJ	0F
+	JMP	CHKF20
+	JMP	CHKA
+0H	JMP	*-*
+* C = 35
+	STJ	0F
+	JMP	CHKF20
+	NOP
+0H	JMP	*-*
+* C = 36
+	STJ	0F
+	JMP	CHKF20
+	JMP	CHKA
+0H	JMP	*-*
+* C = 37
+	STJ	0F
+	JMP	CHKF20
+	JMP	CHKA
+0H	JMP	*-*
+* C = 38
+	STJ	0F
+	JMP	CHKF20
+	JMP	CHKA
+0H	JMP	*-*
+* C = 39
+	STJ	0F
+	JMP	CHKF9
+	JMP	CHKA
+0H	JMP	*-*
+* C = 40
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 41
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 42
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 43
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 44
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 45
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 46
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 47
+	STJ	0F
+	JMP	CHKF5
+	JMP	CHKA
+0H	JMP	*-*
+* C = 48
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 49
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 50
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 51
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 52
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 53
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 54
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 55
+	STJ	0F
+	JMP	CHKF3
+	NOP
+0H	JMP	*-*
+* C = 56
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 57
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 58
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 59
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 60
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 61
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 62
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+* C = 63
+	STJ	0F
+	JMP	CHKFN
+	JMP	CHKA
+0H	JMP	*-*
+**********
+* Check A
+	STJ	0F
+* is I == 0?
+	CMP3	=0=
+	JNE	BAD
+* is A >= 0?
+	CMP1	=0=
+	JL	BAD
+* is A <= 3999
+	CMP1	=3999=
+	JG	BAD
+0H	JMP	*-*
+**********
+* Check FN (normal)
+	STJ	0F
+* is F < 0?
+	CMP2	=0=
+	JL	BAD
+* is F <= 5?
+	CMP2	=5=
+	JLE	0F
+* is F < 9?
+	CMP2	=9=
+	JL	BAD
+* is F <= 13?
+	CMP2	=13=
+	JLE	0F
+* is F < 18?
+	CMP2	=18=
+	JL	BAD
+* is F <= 21?
+	CMP2	=21=
+	JLE	0F
+* is F < 27?
+	CMP2	=27=
+	JL	BAD
+* is F <= 29?
+	CMP2	=29=
+	JLE	0F
+* is F < 36?
+	CMP2	=36=
+	JL	BAD
+* is F <= 37?
+	CMP2	=37=
+	JLE	0F
+* is F != 45?
+	CMP2	=45=
+	JNE	BAD
+* F == 45
+0H	JMP	*-*
+**********
+* Check F2
+	STJ	0F
+* is F < 0?
+	CMP2	=0=
+	JL	BAD
+* is F > 2?
+	CMP2	=2=
+	JG	BAD
+0H	JMP	*-*
+**********
+* Check F3
+	STJ	0F
+* is F < 0?
+	CMP2	=0=
+	JL	BAD
+* is F > 3?
+	CMP2	=3=
+	JG	BAD
+0H	JMP	*-*
+**********
+* Check F5
+	STJ	0F
+* is F < 0?
+	CMP2	=0=
+	JL	BAD
+* is F > 5?
+	CMP2	=5=
+	JG	BAD
+0H	JMP	*-*
+**********
+* Check F9
+	STJ	0F
+* is F < 0?
+	CMP2	=0=
+	JL	BAD
+* is F > 9?
+	CMP2	=9=
+	JG	BAD
+0H	JMP	*-*
+**********
+* Check F20
+	STJ	0F
+* is F < 0?
+	CMP2	=0=
+	JL	BAD
+* is F > 20?
+	CMP2	=20=
+	JG	BAD
+0H	JMP	*-*
+**********
+	END	BEGIN
