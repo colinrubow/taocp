@@ -42,6 +42,15 @@ def get_saddle_point(m: np.ndarray) -> tuple[int, int]:
                 row += 1
     return -1, -1
 
+def get_saddle_point_exhaustive(m: np.ndarray) -> tuple[int, int]:
+    """
+    see previous
+    """
+    for i, row in enumerate(m):
+        for j, entry in enumerate(row):
+            if entry == min(row) and entry == max(m[:,j]):
+                return i, j
+    return -1, -1
 
 if __name__ == '__main__':
     m = np.array([
@@ -50,7 +59,9 @@ if __name__ == '__main__':
         [9, 10, 11, 12]
     ])
     r, c = get_saddle_point(m)
-    assert r == 2 and c == 0, f"failed test 1: r = {r}, c = {c}"
+    assert r == 2 and c == 0, f"get_saddle_point failed test 1: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == 2 and c == 0, f"get_saddle_point_exhaustive failed test 1: r = {r}, c = {c}"
 
     m = np.array([
         [1, 2, 3],
@@ -59,12 +70,16 @@ if __name__ == '__main__':
     ])
     r, c = get_saddle_point(m)
     assert r == 1 and c == 1, f"failed test 2: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == 1 and c == 1, f"get_saddle_point_exhaustive failed test 2: r = {r}, c = {c}"
 
     m = np.array([
         [1, 2, 3, 4]
     ])
     r, c = get_saddle_point(m)
     assert r == 0 and c == 0, f"failed test 3: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == 0 and c == 0, f"get_saddle_point_exhaustive failed test 3: r = {r}, c = {c}"
 
     m = np.array([
         [1],
@@ -74,6 +89,8 @@ if __name__ == '__main__':
     ])
     r, c = get_saddle_point(m)
     assert r == 3 and c == 0, f"failed test 4: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == 3 and c == 0, f"get_saddle_point_exhaustive failed test 4: r = {r}, c = {c}"
 
     m = np.array([
         [1, 2, 3],
@@ -82,12 +99,16 @@ if __name__ == '__main__':
     ])
     r, c = get_saddle_point(m)
     assert r == -1 and c == -1, f"failed test 5: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == -1 and c == -1, f"get_saddle_point_exhaustive failed test 5: r = {r}, c = {c}"
 
     m = np.array([
         [5]
     ])
     r, c = get_saddle_point(m)
     assert r == 0 and c == 0, f"failed test 6: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == 0 and c == 0, f"get_saddle_point_exhaustive failed test 6: r = {r}, c = {c}"
 
     m = -np.array([
         [1, 2, 3, 4],
@@ -96,6 +117,8 @@ if __name__ == '__main__':
     ])
     r, c = get_saddle_point(m)
     assert r == 0 and c == 3, f"failed test 7: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == 0 and c == 3, f"get_saddle_point_exhaustive failed test 7: r = {r}, c = {c}"
 
     m = np.array([
         [69, 50, 14],
@@ -104,6 +127,8 @@ if __name__ == '__main__':
     ])
     r, c = get_saddle_point(m)
     assert r == -1 and c == -1, f"failed test 8: r = {r}, c = {c}"
+    r, c = get_saddle_point_exhaustive(m)
+    assert r == -1 and c == -1, f"get_saddle_point_exhaustive failed test 8: r = {r}, c = {c}"
 
     print('Passed all tests')
 
@@ -133,7 +158,7 @@ if __name__ == '__main__':
 
             # Time the function
             start = time.perf_counter()
-            get_saddle_point(matrix)
+            get_saddle_point_exhaustive(matrix)
             end = time.perf_counter()
 
             total_time += (end - start)
@@ -164,3 +189,20 @@ if __name__ == '__main__':
 # 1000x1000 matrix:
 #   Average time: 889.043355 ms
 #   Total time for 1000 iterations: 889.043355 s
+
+# Time analysis for get_saddle_point_exhaustive
+# 3x3 matrix:
+#   Average time: 0.010151 ms
+#   Total time for 1000 iterations: 0.010151 s
+#
+# 5x5 matrix:
+#   Average time: 0.027633 ms
+#   Total time for 1000 iterations: 0.027633 s
+#
+# 10x10 matrix:
+#   Average time: 0.109199 ms
+#   Total time for 1000 iterations: 0.109199 s
+#
+# 100x100 matrix:
+#   Average time: 33.982236 ms
+#   Total time for 1000 iterations: 33.982236 s
