@@ -1,0 +1,30 @@
+* TAOCP 1.3.2 ex 10, finds a saddle point in a 9x8 matrix
+*
+MATRIX	EQU	1009		The first element of the matrix
+	ORIG	0
+MINROW	ORIG	*+0		gets the min address in the row FIXME: the number of memory addresses
+MAXCOL	ORIG	*+0		gets the max address in the column FIXME: the number of memory addresses
+**********
+**********
+* implement MINROW
+* rI2 will hold the min address and should be initialized with the first memory address of the row
+* rI3 will be used to store the min value
+* rI4 will be used to count comparisons
+	ORIG	MINROW
+	STJ	0F
+* initialize
+TEMP	ST2	*
+	LD3	0,2
+	ENT4	8
+NEXTMIN	DEC4	1
+* checked all values?
+	J4Z	0F
+* is current min greater than the next value?
+	CMP3	TEMP,4
+	JLE	NEXTMIN
+* swap for new min
+	ENT2	TEMP,4
+	LD3	TEMP,4
+	JMP	NEXTMIN
+* found the min
+0H	JMP	*-*
