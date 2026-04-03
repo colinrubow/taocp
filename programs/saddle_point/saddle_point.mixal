@@ -3,14 +3,15 @@
 MATRIX	EQU	1009		The first element of the matrix
 	ORIG	0
 MINROW	ORIG	*+18		gets the min address in the row
-MAXCOL	ORIG	*+0		gets the max address in the column FIXME: the number of memory addresses
+MAXCOL	ORIG	*+18		gets the max address in the column
 **********
 **********
 * implement MINROW
-* rI2 will hold the min address and should be initialized with the first memory address of the row
+* rI2 will hold the min address and should be initialized with the first address of the row
 * rI3 will be used to store the min value
 * rI4 will be used to count comparisons
 * rI5 will be used to store the next address
+* rA is used
 	ORIG	MINROW
 	STJ	0F
 * initialize
@@ -35,4 +36,35 @@ NEXTMIN	DEC4	1
 	JMP	NEXTMIN
 * found the min
 0H	JMP	*-*
-	END	MINROW
+**********
+* implement MAXCOL
+* rI2 will hold the max address and should be initialized with the first address of the column
+* rI3 will be used to store the max value
+* rI4 will be used to count comparisons
+* rI5 will be used to store the next address
+* rA is used
+	ORIG	MAXCOL
+	STJ	0F
+* initialize
+FIRSTM	ST2	*
+TEMP2	NOP
+	LD3	0,2
+	ENT4	72
+NEXTMAX	DEC4	8
+* checked all values?
+	J4Z	0F
+* is current max less than the next value?
+	ST4	TEMP2
+	LDA	FIRSTM
+	ADD	TEMP2
+	STA	TEMP2
+	LD5	TEMP2
+	CMP3	0,5
+	JGE	NEXTMAX
+* swap for new max
+	LD2	TEMP2
+	LD3	0,2
+	JMP	NEXTMAX
+* found the max
+0H	JMP	*-*
+	END	MAXCOL
