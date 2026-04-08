@@ -4,6 +4,7 @@ MATRIX	EQU	1009		The first element of the matrix
 	ORIG	0
 MINROW	ORIG	*+18		gets the min address in the row
 MAXCOL	ORIG	*+18		gets the max address in the column
+FROW	ORIG	*+11		finds a value in the row
 **********
 **********
 * implement MINROW
@@ -67,4 +68,10 @@ NEXTMAX	DEC4	8
 	JMP	NEXTMAX
 * found the max
 0H	JMP	*-*
-	END	MAXCOL
+**********
+* implement FROW
+	ORIG	FROW
+	STJ	0F
+* return
+0H	JMP	*-*
+	END	FROW
