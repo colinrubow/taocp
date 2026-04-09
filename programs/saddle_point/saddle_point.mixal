@@ -4,7 +4,7 @@ MATRIX	EQU	1009		The first element of the matrix
 	ORIG	0
 MINROW	ORIG	*+18		gets the min address in the row
 MAXCOL	ORIG	*+18		gets the max address in the column
-FROW	ORIG	*+11		finds a value in the row
+FVROW	ORIG	*+11		finds a value in the row
 **********
 **********
 * implement MINROW
@@ -73,5 +73,34 @@ NEXTMAX	DEC4	8
 	ORIG	FROW
 	STJ	0F
 * return
+0H	JMP	*-*
+**********
+* implement FVROW
+* rI2 should be initialized with the first address of the row. Will hold the address of the next value
+* rI3 should be initialized with the value to search for
+* rI4 should be initialized with the distance from the first address to start
+	ORIG	FVROW
+	STJ	0F
+TEMP3	NOP
+NEXTV	INC4	1
+* checked all values?
+	CMP4	=8=
+	JE	NOFIND
+* found one?
+	ST2	TEMP3
+	LDA	TEMP3
+	ST4	TEMP3
+	ADD	TEMP3
+	STA	TEMP3
+	LD5	TEMP3
+	CMP3	0,5
+	JNE	NEXTV
+	JMP	FIND
+* did not find one
+NOFIND	ENT2	0
+	JMP	0H
+* found one
+FIND	LD2	TEMP3
+	JMP	0H
 0H	JMP	*-*
 	END	FROW
