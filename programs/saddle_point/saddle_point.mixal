@@ -1,11 +1,13 @@
 * TAOCP 1.3.2 ex 10, finds a saddle point in a 9x8 matrix
 *
 MATRIX	EQU	1009		The first element of the matrix
+NUMROWS	EQU	9		number of rows
+NUMCOLS	EQU	8		number of columns
 	ORIG	0
 MINROW	ORIG	*+18		gets the min address in the row
 MAXCOL	ORIG	*+18		gets the max address in the column
-FVROW	ORIG	*+11		finds a value in the row
-**********
+FVROW	ORIG	*+19		finds a value in the row
+MAIN	ORIG	*
 **********
 * implement MINROW
 * rI2 will hold the min address and should be initialized with the first address of the row
@@ -19,7 +21,7 @@ FVROW	ORIG	*+11		finds a value in the row
 FIRSTA	ST2	*
 TEMP	NOP
 	LD3	0,2
-	ENT4	8
+	ENT4	NUMCOLS
 NEXTMIN	DEC4	1
 * checked all values?
 	J4Z	0F
@@ -50,8 +52,8 @@ NEXTMIN	DEC4	1
 FIRSTM	ST2	*
 TEMP2	NOP
 	LD3	0,2
-	ENT4	72
-NEXTMAX	DEC4	8
+	ENT4	NUMCOLS*NUMROWS
+NEXTMAX	DEC4	NUMCOLS
 * checked all values?
 	J4Z	0F
 * is current max less than the next value?
@@ -69,22 +71,18 @@ NEXTMAX	DEC4	8
 * found the max
 0H	JMP	*-*
 **********
-* implement FROW
-	ORIG	FROW
-	STJ	0F
-* return
-0H	JMP	*-*
-**********
 * implement FVROW
 * rI2 should be initialized with the first address of the row. Will hold the address of the next value
 * rI3 should be initialized with the value to search for
 * rI4 should be initialized with the distance from the first address to start
+* rI5 is used
+* rA is used
 	ORIG	FVROW
 	STJ	0F
 TEMP3	NOP
 NEXTV	INC4	1
 * checked all values?
-	CMP4	=8=
+	CMP4	=NUMCOLS=
 	JE	NOFIND
 * found one?
 	ST2	TEMP3
@@ -97,10 +95,56 @@ NEXTV	INC4	1
 	JNE	NEXTV
 	JMP	FIND
 * did not find one
-NOFIND	ENT2	0
-	JMP	0H
+NOFIND	ENT2	-1
+	JMP	0F
 * found one
 FIND	LD2	TEMP3
-	JMP	0H
+	JMP	0F
 0H	JMP	*-*
-	END	FROW
+**********
+* MAIN program
+	ORIG	MAIN
+	ENT6	MATRIX
+	ENT1	0
+* get row min
+TEMP4	ST6	*
+	LD2	TEMP4
+	JMP	MINROW
+ROWA	ST2	*
+VAL	ST3	*
+* get col max
+	ST1	TEMP4
+	LDA	TEMP4
+	MUL	NUMCOLS
+	STA	TEMP4
+	LDA	ROWA
+	SUB	TEMP4
+	STA	TEMP4
+	LD2	TEMP4
+	JMP	MAXCOL
+* does the maxcol and minrow addresses agree? (I2 =? ROWA)
+	CMP2	ROWA
+	JE	FOUND
+* check row for more mins
+	ST6	TEMP4
+	LD2	TEMP4
+	LD3	VAL
+	STA	ROWA
+	SUB	TEMP4
+	STA	TEMP4
+	LD4	TEMP4
+	JMP	FVROW
+* is there another min?
+	CMP2	=-1=
+	JNE	ROWA
+	INC6	NUMCOLS
+* are we out of rows?
+	CMP6	=1073=
+	JG	NOFOUND
+	JMP	TEMP4
+NOFOUND	ENT1	0
+	HLT
+FOUND	LD1	ROWA
+	HLT
+**********
+	END	MAIN
