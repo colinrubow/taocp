@@ -4,8 +4,15 @@ MATRIX	EQU	1009		The first element of the matrix
 NUMROWS	EQU	9		number of rows
 NUMCOLS	EQU	8		number of columns
 	ORIG	0
-MINROW	ORIG	*+18		gets the min address in the row
-MAXCOL	ORIG	*+18		gets the max address in the column
+RFIRST	NOP
+TEMPA	NOP
+TEMPB	NOP	
+TEMPC	NOP
+TEMPD	NOP
+TEMPE	NOP
+TEMPF	NOP
+MINROW	ORIG	*+19		gets the min address in the row
+ISMAXC	ORIG	*+19		gets the max address in the column
 FVROW	ORIG	*+19		finds a value in the row
 MAIN	ORIG	*
 **********
@@ -18,88 +25,84 @@ MAIN	ORIG	*
 	ORIG	MINROW
 	STJ	0F
 * initialize
-FIRSTA	ST2	*
-TEMP	NOP
+	ST2	RFIRST
 	LD3	0,2
-	ENT4	NUMCOLS
-NEXTMIN	DEC4	1
+	ENT4	0
+NEXTVAL	INC4	1
 * checked all values?
-	J4Z	0F
-* is current min greater than the next value?
-	ST4	TEMP
-	LDA	FIRSTA
-	ADD	TEMP
-	STA	TEMP
-	LD5	TEMP
+	CMP4	=NUMCOLS=
+	JE	0F
+* is current val less than the current?
+	ST4	TEMPA
+	LDA	TEMPA
+	ADD	RFIRST
+	STA	TEMPA
+	LD5	TEMPA
 	CMP3	0,5
-	JLE	NEXTMIN
+	JLE	NEXTVAL
 * swap for new min
-	LD2	TEMP
+	LD2	TEMPA
 	LD3	0,2
-	JMP	NEXTMIN
+	JMP	NEXTVAL
 * found the min
 0H	JMP	*-*
 **********
-* implement MAXCOL
-* rI2 will hold the max address and should be initialized with the first address of the column
-* rI3 will be used to store the max value
-* rI4 will be used to count comparisons
+* implement ISMAXC
+* rI2 initialize with the first address of the column. If val is max, positive. If otherwise, negative
+* rI3 is initialized with the tested value
+* rI4 will be used to count
 * rI5 will be used to store the next address
 * rA is used
-	ORIG	MAXCOL
+	ORIG	ISMAXC
 	STJ	0F
 * initialize
-FIRSTM	ST2	*
-TEMP2	NOP
-	LD3	0,2
-	ENT4	NUMCOLS*NUMROWS
-NEXTMAX	DEC4	NUMCOLS
+	ENT4	-1
+NEXTV	INC4	1
 * checked all values?
-	J4Z	0F
-* is current max less than the next value?
-	ST4	TEMP2
-	LDA	FIRSTM
-	ADD	TEMP2
-	STA	TEMP2
-	LD5	TEMP2
+	CMP4	=NUMROWS=
+	JE	0F
+* is current val greater than the test value?
+	ST4	TEMPB
+	LDA	TEMPB
+	MUL	=NUMCOLS=
+	SLAX	5
+	ST2	TEMPB
+	ADD	TEMPB
+	STA	TEMPB
+	LD5	TEMPB
 	CMP3	0,5
-	JGE	NEXTMAX
-* swap for new max
-	LD2	TEMP2
-	LD3	0,2
-	JMP	NEXTMAX
-* found the max
+	JL	1F
+	JMP	NEXTV
+1H	ENT2	-1
 0H	JMP	*-*
 **********
 * implement FVROW
-* rI2 should be initialized with the first address of the row. Will hold the address of the next value
+* rI2 should be initialized with the first address of the row. Will hold the address of the next value or -1 if no other value
 * rI3 should be initialized with the value to search for
 * rI4 should be initialized with the distance from the first address to start
 * rI5 is used
 * rA is used
 	ORIG	FVROW
 	STJ	0F
-TEMP3	NOP
-NEXTV	INC4	1
+NEXT	INC4	1
 * checked all values?
 	CMP4	=NUMCOLS=
 	JE	NOFIND
 * found one?
-	ST2	TEMP3
-	LDA	TEMP3
-	ST4	TEMP3
-	ADD	TEMP3
-	STA	TEMP3
-	LD5	TEMP3
+	ST2	TEMPC
+	LDA	TEMPC
+	ST4	TEMPC
+	ADD	TEMPC
+	STA	TEMPC
+	LD5	TEMPC
 	CMP3	0,5
-	JNE	NEXTV
+	JNE	NEXT
 	JMP	FIND
 * did not find one
 NOFIND	ENT2	-1
 	JMP	0F
 * found one
-FIND	LD2	TEMP3
-	JMP	0F
+FIND	LD2	TEMPC
 0H	JMP	*-*
 **********
 * MAIN program
@@ -107,32 +110,31 @@ FIND	LD2	TEMP3
 	ENT6	MATRIX
 	ENT1	0
 * get row min
-TEMP4	ST6	*
-	LD2	TEMP4
+NXTROW	ST6	TEMPD
+	LD2	TEMPD
 	JMP	MINROW
-ROWA	ST2	*
-VAL	ST3	*
-* get col max
-	ST1	TEMP4
-	LDA	TEMP4
+ROWA	ST2	TEMPE
+	ST3	TEMPF
+* see if max
+	ST1	TEMPD
+	LDA	TEMPD
 	MUL	NUMCOLS
-	STA	TEMP4
-	LDA	ROWA
-	SUB	TEMP4
-	STA	TEMP4
-	LD2	TEMP4
-	JMP	MAXCOL
-* does the maxcol and minrow addresses agree? (I2 =? ROWA)
-	CMP2	ROWA
-	JE	FOUND
+	SLAX	5
+	STA	TEMPD
+	LDA	TEMPE
+	SUB	TEMPD
+	STA	TEMPD
+	LD2	TEMPD
+	JMP	ISMAXC
+	J2P	FOUND
 * check row for more mins
-	ST6	TEMP4
-	LD2	TEMP4
-	LD3	VAL
-	LDA	ROWA
-	SUB	TEMP4
-	STA	TEMP4
-	LD4	TEMP4
+	ST6	TEMPD
+	LD2	TEMPD
+	LD3	TEMPF
+	LDA	TEMPE
+	SUB	TEMPD
+	STA	TEMPD
+	LD4	TEMPD
 	JMP	FVROW
 * is there another min?
 	CMP2	=-1=
@@ -141,10 +143,10 @@ VAL	ST3	*
 * are we out of rows?
 	CMP6	=1073=
 	JG	NOFOUND
-	JMP	TEMP4
+	JMP	NXTROW
 NOFOUND	ENT1	0
 	HLT
-FOUND	LD1	ROWA
+FOUND	LD1	TEMP
 	HLT
 **********
 	END	MAIN
